@@ -11,6 +11,7 @@ export interface MenuCta {
 
 export interface MenuColumn {
   title: string
+  href?: string
   items?: MenuItem[]
   description?: string
   cta?: MenuCta
@@ -19,10 +20,11 @@ export interface MenuColumn {
 export const productMenuData: MenuColumn[] = [
   {
     title: 'PC Components',
+    href: '/products/pc-components',
     items: [
-      { label: 'Cases',            href: '#' },
-      { label: 'iCUE LINK',        href: '#' },
-      { label: 'CPU & AIO Coolers', href: '#' },
+      { label: 'Cases',             href: '/products/cases' },
+      { label: 'iCUE LINK',         href: '/products/icue-link' },
+      { label: 'CPU & AIO Coolers', href: '/products/cpu-aio-coolers' },
     ],
   },
   {
