@@ -1,13 +1,23 @@
 <template>
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 relative" @mouseleave="activeMenu = null">
     <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
       <div class="text-2xl font-black tracking-widest text-gray-900">CORSAIR</div>
 
-      <nav class="hidden md:flex gap-8 text-sm text-gray-500">
-        <a href="#" class="hover:text-gray-900 font-medium">Products</a>
-        <a href="#" class="hover:text-gray-900 font-medium">PC Builder</a>
-        <a href="#" class="hover:text-gray-900 font-medium">Deals</a>
-        <a href="#" class="hover:text-gray-900 font-medium">Support</a>
+      <nav class="hidden md:flex text-sm text-gray-500">
+        <div
+          v-for="item in navItems"
+          :key="item.key"
+          class="relative px-4 py-1"
+          @mouseenter="activeMenu = item.key"
+        >
+          <a
+            href="#"
+            class="font-medium hover:text-gray-900"
+            :class="activeMenu === item.key ? 'text-gray-900' : ''"
+          >
+            {{ item.label }}
+          </a>
+        </div>
       </nav>
 
       <div class="flex gap-5 text-gray-400">
@@ -19,5 +29,26 @@
         </svg>
       </div>
     </div>
+
+    <DropdownMenu v-if="activeMenu === 'products'" :columns="productMenuData" />
+    <DropdownMenu v-if="activeMenu === 'guides'"   :columns="guidesMenuData" />
+    <DropdownMenu v-if="activeMenu === 'business'" :columns="businessMenuData" />
+    <DropdownMenu v-if="activeMenu === 'software'" :columns="softwareMenuData" />
   </header>
 </template>
+
+<script setup lang="ts">
+import { productMenuData }  from '~/data/menu/product_menu_data'
+import { guidesMenuData }   from '~/data/menu/guides_menu_data'
+import { businessMenuData } from '~/data/menu/business_menu_data'
+import { softwareMenuData } from '~/data/menu/software_menu_data'
+
+const activeMenu = ref<string | null>(null)
+
+const navItems = [
+  { key: 'products',  label: 'Products' },
+  { key: 'guides',    label: 'Guides' },
+  { key: 'business',  label: 'Business' },
+  { key: 'software',  label: 'Software' },
+]
+</script>
