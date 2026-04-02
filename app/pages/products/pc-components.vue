@@ -23,7 +23,7 @@
       <div class="relative z-10 max-w-7xl mx-auto px-6 h-full flex flex-col justify-center">
         <p class="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase mb-3">Browse</p>
         <h1 class="text-5xl font-black uppercase tracking-tight text-gray-900 mb-2">PC Components</h1>
-        <p class="text-gray-500 text-sm">{{ pcProducts.length }} products</p>
+        <p class="text-gray-500 text-sm">{{ filteredProducts.length }} products</p>
       </div>
     </section>
 
@@ -55,18 +55,19 @@
     <section class="max-w-7xl mx-auto px-6 py-12">
       <h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-6">Shop by Category</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a
+        <button
           v-for="cat in pcCategories"
           :key="cat.slug"
-          href="#"
-          class="group rounded-xl overflow-hidden border border-gray-200 hover:border-blue-500 hover:shadow-md bg-white"
+          class="group rounded-xl overflow-hidden border text-left bg-white"
+          :class="activeCategory === cat.slug ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-blue-500 hover:shadow-md'"
+          @click="activeCategory = cat.slug; scrollToProducts()"
         >
           <img :src="cat.img" :alt="cat.label" class="w-full h-32 object-cover" />
           <div class="p-4">
             <p class="text-sm font-bold text-gray-900">{{ cat.label }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">{{ cat.count }} products</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ countByCategory(cat.label) }} products</p>
           </div>
-        </a>
+        </button>
       </div>
     </section>
 
@@ -76,10 +77,11 @@
     </div>
 
     <!-- PRODUCTS GRID -->
-    <section class="max-w-7xl mx-auto px-6 py-12">
+    <section ref="productsSection" class="max-w-7xl mx-auto px-6 py-12">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">
-          Featured Products
+          {{ activeCategory === 'all' ? 'All Products' : pcCategories.find(c => c.slug === activeCategory)?.label }}
+          <span class="ml-2 text-gray-300">({{ filteredProducts.length }})</span>
         </h2>
         <select class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded focus:outline-none focus:border-blue-500">
           <option>Sort: Best Sellers</option>
@@ -166,11 +168,19 @@ import { pcCategories, pcProducts } from '~/data/products/pc_components_data'
 useHead({ title: 'PC Components — CORSAIR' })
 
 const activeCategory = ref('all')
+const productsSection = ref<HTMLElement | null>(null)
 
 const filteredProducts = computed(() => {
   if (activeCategory.value === 'all') return pcProducts
   const cat = pcCategories.find(c => c.slug === activeCategory.value)
-  if (!cat) return pcProducts
+  if (!cat) return []
   return pcProducts.filter(p => p.category === cat.label)
 })
+
+const countByCategory = (label: string) =>
+  pcProducts.filter(p => p.category === label).length
+
+const scrollToProducts = () => {
+  productsSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 </script>
